@@ -79,10 +79,11 @@ export default function Home() {
                       <td className="px-6 py-4">{item?.schedule_for}</td>
                       <td className="px-6 py-4">{item?.start_time}</td>
                       <td className="px-6 py-4">{item?.timezone}</td>
-                      <td className="px-6 py-4 flex gap-3">
+                      <td className="px-6 py-4 flex items-center gap-3">
                         <a target="_blank" href={`${item?.url}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
                           Join
                         </a>
+                        <ModalEdit id={item?.id} valData={item} />
                         <button
                           type="button"
                           onClick={() => handleDelete(item?.id)}
@@ -186,6 +187,111 @@ const ModalAdd = () => {
                 onChange={(e) => setData({ ...data, schedule_for: e.target.value })}
                 className="border w-full p-2 rounded text-[14px]"
                 id="name"
+              />
+            </div>
+            <DialogFooter>
+              <Button className="mt-4" type="submit">
+                Save changes
+              </Button>
+            </DialogFooter>
+          </form>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const ModalEdit = ({ id, valData }) => {
+  const [data, setData] = useState({});
+  useEffect(() => {
+    setData(valData);
+  }, []);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const date = new Date(data?.start_time);
+      date.setHours(20, 0, 0, 0);
+      const utcDate = date.toISOString();
+      const res = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/zoom/meeting/${id}`, { ...data, start_time: utcDate });
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button className="border-none bg-transparent p-0  text-[14px]" variant="outline">
+          Edit
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Edit profile</DialogTitle>
+          <DialogDescription>Make changes to your profile here. Click save when you're done.</DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2">
+              <label className="text-[14px] font-semibold text-black">Agenda</label>
+              <input
+                type="text"
+                onChange={(e) => setData({ ...data, agenda: e.target.value })}
+                className="border w-full p-2 rounded text-[14px]"
+                id="name"
+                value={data?.agenda}
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-[14px] font-semibold text-black">Topic</label>
+              <input
+                type="text"
+                onChange={(e) => setData({ ...data, topic: e.target.value })}
+                className="border w-full p-2 rounded text-[14px]"
+                id="name"
+                value={data?.topic}
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-[14px] font-semibold text-black">Start Time</label>
+              <input
+                type="datetime-local"
+                onChange={(e) => setData({ ...data, start_time: e.target.value })}
+                className="border w-full p-2 rounded text-[14px]"
+                id="name"
+                value={data?.start_time}
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-[14px] font-semibold text-black">Duration</label>
+              <input
+                type="number"
+                onChange={(e) => setData({ ...data, duration: parseInt(e.target.value) })}
+                className="border w-full p-2 rounded text-[14px]"
+                id="name"
+                value={data?.duration}
+              />
+            </div>{" "}
+            <div className="flex flex-col gap-2">
+              <label className="text-[14px] font-semibold text-black">Password</label>
+              <input
+                type="password"
+                onChange={(e) => setData({ ...data, password: e.target.value })}
+                className="border w-full p-2 rounded text-[14px]"
+                id="name"
+                value={data?.password}
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-[14px] font-semibold text-black">Schedule For</label>
+              <input
+                type="email"
+                onChange={(e) => setData({ ...data, schedule_for: e.target.value })}
+                className="border w-full p-2 rounded text-[14px]"
+                id="name"
+                value={data?.schedule_for}
               />
             </div>
             <DialogFooter>
