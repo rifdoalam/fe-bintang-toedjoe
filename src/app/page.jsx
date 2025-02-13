@@ -1,8 +1,6 @@
 "use client";
 import MainLayout from "@/components/layouts/main-layout";
 import axios from "axios";
-import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -38,64 +36,64 @@ export default function Home() {
           <div className="flex">
             <ModalAdd />
           </div>
-          <table className="w-full text-sm text-left rtl:text-right overflow-hidden text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-              <tr>
-                <th scope="col" className="px-6 py-3">
-                  Agenda
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Topic
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Duration
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Password
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Schedule For
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Start Time
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Time Zone
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Time Zone
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {!loading &&
-                data?.map((item, index) => {
-                  return (
-                    <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                      <td className="px-6 py-4">{item?.agenda}</td>
-                      <td className="px-6 py-4">{item?.topic}</td>
-                      <td className="px-6 py-4">{item?.duration}</td>
-                      <td className="px-6 py-4">{item?.password}</td>
-                      <td className="px-6 py-4">{item?.schedule_for}</td>
-                      <td className="px-6 py-4">{item?.start_time}</td>
-                      <td className="px-6 py-4">{item?.timezone}</td>
-                      <td className="px-6 py-4 flex items-center gap-3">
-                        <a target="_blank" href={`${item?.url}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-                          Join
-                        </a>
-                        <ModalEdit id={item?.id} valData={item} />
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(item?.id)}
-                          className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-            </tbody>
-          </table>
+          <div className="relative overflow-x-auto h-[50vh] ">
+            <table className="w-full  overflow-scroll text-sm text-left rtl:text-right  text-gray-500 dark:text-gray-400">
+              <thead className="text-xs sticky top-0 w-full text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                  <th scope="col" className="px-6 py-3">
+                    Agenda
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Topic
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Duration
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Password
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Schedule For
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Start Time
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Time Zone
+                  </th>
+                  <th scope="col" className="px-6 py-3"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {!loading &&
+                  data?.map((item, index) => {
+                    return (
+                      <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                        <td className="px-6 py-4">{item?.agenda}</td>
+                        <td className="px-6 py-4">{item?.topic}</td>
+                        <td className="px-6 py-4">{item?.duration}</td>
+                        <td className="px-6 py-4">{item?.password} </td>
+                        <td className="px-6 py-4">{item?.schedule_for}</td>
+                        <td className="px-6 py-4">{new Date(item?.start_time).toLocaleString()}</td>
+                        <td className="px-6 py-4">{item?.timezone}</td>
+                        <td className="px-6 py-4 flex items-center gap-3">
+                          <a target="_blank" href={`${item?.url}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                            Join
+                          </a>
+                          <ModalEdit id={item?.id} valData={item} />
+                          <button
+                            type="button"
+                            onClick={() => handleDelete(item?.id)}
+                            className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </MainLayout>
@@ -111,7 +109,7 @@ const ModalAdd = () => {
 
     try {
       const date = new Date(data?.start_time);
-      date.setHours(20, 0, 0, 0);
+      date.setHours(date.getHours());
       const utcDate = date.toISOString();
       const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/zoom/create-meeting`, { ...data, start_time: utcDate });
       window.location.reload();
@@ -120,7 +118,7 @@ const ModalAdd = () => {
       console.log(error);
     }
   };
-  console.log(data);
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -130,8 +128,8 @@ const ModalAdd = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
-          <DialogDescription>Make changes to your profile here. Click save when you're done.</DialogDescription>
+          <DialogTitle>Tambah Meeting</DialogTitle>
+          <DialogDescription>Buat meeting baru disini</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <form onSubmit={handleSubmit} className="flex flex-col gap-2">
@@ -229,8 +227,8 @@ const ModalEdit = ({ id, valData }) => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
-          <DialogDescription>Make changes to your profile here. Click save when you're done.</DialogDescription>
+          <DialogTitle>Edit Meeting</DialogTitle>
+          <DialogDescription>Perbarui meeting disini </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <form onSubmit={handleSubmit} className="flex flex-col gap-2">
