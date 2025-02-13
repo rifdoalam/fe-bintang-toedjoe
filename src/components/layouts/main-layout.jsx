@@ -5,12 +5,7 @@ import { useEffect } from "react";
 const MainLayout = ({ children }) => {
   const { loading, isAuthenticated } = useAuth();
 
-  useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      window.location.href = "/login";
-    }
-  }, []);
-  return <div className="w-screen">{children}</div>;
+  return <div className="w-screen h-screen bg-white">{children}</div>;
 };
 
 export default MainLayout;
